@@ -10,7 +10,10 @@ inspired by [this article](https://medium.com/northcoders/creating-a-project-gen
 git clone https://github.com/devskar/init-cli
 cd init-cli
 yarn
+yarn global add $PWD
 ```
+
+Note: if the last step does not work for you, you can still use `npm install -g`
 
 ### using npm
 
@@ -18,11 +21,12 @@ yarn
 git clone https://github.com/devskar/init-cli
 cd init-cli
 npm install
+npm install -g
 ```
 
 ## Usage
 
-Note: make sure you added the yarn/npm bin to your Path!
+Note: make sure you added the npm bin to your Path!
 
 run `init-cli <project-name> [options]` anywhere
 
