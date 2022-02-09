@@ -1,40 +1,86 @@
 #!/usr/bin/env node
 
-import * as fs from 'fs';
-import inquirer from 'inquirer';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import createDirectoryContents from './createDirectoryContents.js';
+const commander = require('commander');
+const fs = require('fs');
+const inquirer = require('inquirer');
+const { resolve } = require('path');
+const createDirectoryContents = require('./createDirectoryContents');
+const packageJson = require('./package.json');
+
 const CURR_DIR = process.cwd();
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const TEMPLATE_CHOICES = fs.readdirSync(`${__dirname}/templates`);
 
-const CHOICES = fs.readdirSync(`${__dirname}/templates`);
+const main = async () => {
+	const options = validateCommandLineArgs();
 
-const QUESTIONS = [
-	{
-		name: 'project-choice',
+	if (!options.template) {
+		options.template = await askForTemplate();
+	}
+
+	const { templatePath, outputPath } = generatePaths(options);
+
+	createDirectoryContents(templatePath, outputPath);
+};
+
+const generatePaths = options => {
+	const templatePath = `${__dirname}/templates/${options.template}`;
+
+	let outputPath;
+	if (options.projectName === '.') {
+		outputPath = CURR_DIR;
+	} else {
+		outputPath = resolve(CURR_DIR, options.projectName);
+		fs.mkdirSync(outputPath);
+	}
+
+	return { templatePath, outputPath };
+};
+
+const askForTemplate = async () => {
+	const templateQuestion = {
+		name: 'template',
 		type: 'list',
 		message: 'What project template would you like to generate?',
-		choices: CHOICES
-	},
-	{
-		name: 'project-name',
-		type: 'input',
-		message: 'Project name:',
-		validate: function (input) {
-			if (/^([A-Za-z\-\\_\d])+$/.test(input)) return true;
-			else
-				return 'Project name may only include letters, numbers, underscores and hashes.';
-		}
+		choices: TEMPLATE_CHOICES,
+	};
+
+	return await inquirer.prompt(templateQuestion).then(answers => {
+		return answers.template;
+	});
+};
+
+const validateCommandLineArgs = () => {
+	const options = {};
+	const program = new commander.Command(packageJson.name)
+		.version(packageJson.version)
+		.argument(
+			'[project-name]',
+			'the name of the project',
+			name => (options.projectName = name),
+			'.'
+		)
+		.usage('<project-name> [options]')
+		.addOption(new commander.Option('-L, --list', 'list available templates'))
+		.addOption(
+			new commander.Option(
+				'-t, --template <template-name>',
+				'select a template'
+			)
+				.choices(TEMPLATE_CHOICES)
+				.argParser(value => (options.template = value))
+		)
+		.parse(process.argv);
+
+	if (program.opts().list) {
+		console.log('available templates:');
+		console.log('\t' + TEMPLATE_CHOICES.join('\n\t'));
+		process.exit(0);
 	}
-];
 
-inquirer.prompt(QUESTIONS).then(answers => {
-	const projectChoice = answers['project-choice'];
-	const projectName = answers['project-name'];
-	const templatePath = `${__dirname}/templates/${projectChoice}`;
+	// set default value
+	options.projectName = options.projectName || '.';
 
-	fs.mkdirSync(`${CURR_DIR}/${projectName}`);
+	return options;
+};
 
-	createDirectoryContents(templatePath, projectName);
-});
+main();

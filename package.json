@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Project for instantiating projects via cli",
   "main": "index.js",
-  "type": "module",
   "bin": {
     "init-cli": "./index.js"
   },
- "license": "ISC",
- "dependencies": {
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.0.0",
     "inquirer": "^8.0.0"
   },
   "devDependencies": {
