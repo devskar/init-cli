@@ -1,7 +1,6 @@
 const fs = require('fs');
-const CURR_DIR = process.cwd();
 
-module.exports = createDirectoryContents = (templatePath, outputPath) => {
+const createDirectoryContents = (templatePath, outputPath) => {
 	const filesToCreate = fs.readdirSync(templatePath);
 
 	filesToCreate.forEach(file => {
@@ -25,3 +24,5 @@ module.exports = createDirectoryContents = (templatePath, outputPath) => {
 		}
 	});
 };
+
+module.exports = createDirectoryContents;
