@@ -1,6 +1,6 @@
 # init-cli
 
-inspired by [this](https://medium.com/northcoders/creating-a-project-generator-with-node-29e13b3cd309) but added [commander.js](https://github.com/tj/commander.js)
+inspired by [this article](https://medium.com/northcoders/creating-a-project-generator-with-node-29e13b3cd309) but added [commander.js](https://github.com/tj/commander.js)
 
 ## Installation
 
