@@ -36,3 +36,7 @@ available options:
 -L, --list list available templates <br>
 -t, --template <template-name> select a template <br>
 -h, --help display help for command <br>
+
+## Setup Scripts
+
+Each template can have one `init.setup.js`. It has to export a function that can take `projectPath` as string argument. That script will be run after all files have bin created. It should be used to install dependencies or any other ways to setup the project.

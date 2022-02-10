@@ -5,8 +5,10 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const { resolve } = require('path');
 const createDirectoryContents = require('./createDirectoryContents');
+const installDependencies = require('./installDependencies');
 const packageJson = require('./package.json');
 
+const SETUP_FILE = 'init.setup.js';
 const CURR_DIR = process.cwd();
 const TEMPLATE_CHOICES = fs.readdirSync(`${__dirname}/templates`);
 
@@ -19,7 +21,9 @@ const main = async () => {
 
 	const { templatePath, outputPath } = generatePaths(options);
 
-	createDirectoryContents(templatePath, outputPath);
+	createDirectoryContents(templatePath, outputPath, SETUP_FILE);
+
+	installDependencies(templatePath, outputPath, SETUP_FILE);
 };
 
 const generatePaths = options => {

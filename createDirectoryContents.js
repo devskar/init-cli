@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const createDirectoryContents = (templatePath, outputPath) => {
+const createDirectoryContents = (templatePath, outputPath, setupFileName) => {
 	const filesToCreate = fs.readdirSync(templatePath);
 
 	filesToCreate.forEach(file => {
@@ -8,6 +8,9 @@ const createDirectoryContents = (templatePath, outputPath) => {
 		const stats = fs.statSync(origFilePath);
 
 		if (stats.isFile()) {
+			// don't copy the config file
+			if (file === setupFileName) return;
+
 			// Rename
 			if (file === '.npmignore') file = '.gitignore';
 			const fileOutputPath = `${outputPath}/${file}`;
